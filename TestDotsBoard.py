@@ -2,16 +2,28 @@
 import unittest
 from DotsBoard import *
 from dotsSampleData import *
+import cv2
+import numpy as np
 
 class TestDotsBoard(unittest.TestCase):
   def setUp(self):
-    self.board = DotsBoard()
+    self.board = DotsBoard(None,None)
 
   def test_printBoard(self):
     self.board._dots = allGreenDots
     self.assertEqual(self.board.printBoard(), greenBoard)
     self.board._dots = sampleBoard1
     self.assertEqual(self.board.printBoard(), boardSample1)
+
+  def test_constructFromImage(self):
+	image = cv2.imread("dots.png")
+	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	circles = cv2.HoughCircles(gray,cv2.cv.CV_HOUGH_GRADIENT,1,20,
+                            param1=5,param2=24,minRadius=10,maxRadius=20)
+	circles = np.round(circles[0, :]).astype("int")
+	
+	self.board = DotsBoard(circles, image)
+	self.assertEqual(self.board.printBoard(), dotsPNG)
 
 class TestDot(unittest.TestCase):
   
@@ -38,8 +50,5 @@ class TestDot(unittest.TestCase):
   def test_throwsExceptionForInvalidColours(self):
     self.assertRaises(ValueError, Dot,0,0,0,0,[159,88,142])
 
-  def test_isSortable(self): 
-    self.assertTrue(all(map(lambda s, o: s.x == o.x and s.y == o.y ,
-                    sorted(scrambledSampleBoard1, key=Dot.__lt__), sampleBoard1)))
-
+  
 unittest.main()

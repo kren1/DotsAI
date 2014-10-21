@@ -130,4 +130,10 @@ scrambledSampleBoard1 = [
     Dot(3,2,30,20,Dot.Green),
   ]
 
+dotsPNG= """P G B P B G 
+R G Y P P Y 
+G Y P R P P 
+B G Y R R Y 
+B P P R P B 
+P P G Y B B \n"""
 
