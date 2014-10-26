@@ -7,7 +7,7 @@ import numpy as np
 
 class TestDotsBoard(unittest.TestCase):
   def setUp(self):
-    self.board = DotsBoard(None,None)
+    self.board = DotsBoard(None)
 
   def test_printBoard(self):
     self.board._dots = allGreenDots
@@ -17,12 +17,8 @@ class TestDotsBoard(unittest.TestCase):
 
   def test_constructFromImage(self):
 	image = cv2.imread("dots.png")
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	circles = cv2.HoughCircles(gray,cv2.cv.CV_HOUGH_GRADIENT,1,20,
-                            param1=5,param2=24,minRadius=10,maxRadius=20)
-	circles = np.round(circles[0, :]).astype("int")
 	
-	self.board = DotsBoard(circles, image)
+	self.board = DotsBoard(image)
 	self.assertEqual(self.board.printBoard(), dotsPNG)
 
 class TestDot(unittest.TestCase):

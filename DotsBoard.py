@@ -7,8 +7,15 @@ from operator import itemgetter
 
 class DotsBoard:
   
-  def __init__(self, circles, image):
+  def __init__(self, image):
+    if image is None:
+      return
     self._dots = []
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    circles = cv2.HoughCircles(gray,cv2.cv.CV_HOUGH_GRADIENT,2,20,
+                            param1=2,param2=26,minRadius=15,maxRadius=22)
+    circles = numpy.round(circles[0, :]).astype("int")
+	
     
     if circles is not None:
       map(foo,circles)
@@ -17,15 +24,15 @@ class DotsBoard:
       circles = sorted(circles,key=itemgetter(0))  
       circles = sorted(circles,key=itemgetter(1))
 	#print str(circles[0..len(circles)][1]) + "\n"
-      circles = filterCircles(circles,image)
-#      cv2.imshow('img',image)
+     # circles = filterCircles(circles,image)
+#      cv2.imshow('img',gray)
 #      cv2.waitKey()
       assert len(circles) == 36, "too many circles found: %r \n\n %r" % (len(circles),  str(circles))
       for i in range(0, len(circles)):
         x = circles[i][0]
         y = circles[i][1]
         px = image[y][x][::-1]
-        print "x: " + str(x) + " y: " + str(y) + " col: " + determineColour(px) + "\n"
+       # print "x: " + str(x) + " y: " + str(y) + " col: " + determineColour(px) + "\n"
         self._dots.append(Dot(i % 6,  i // 6,x ,y, px ))
 		
   def printBoard(self):
@@ -42,7 +49,7 @@ def filterCircles(circles,image):
   circles = [c for c in circles if c[0] < 510 and c[1] < 650]
   xs = map(lambda c: c[0],circles)
   ys = map(lambda c: c[1],circles)
-  print collections.Counter(map(myround,xs))
+  #print collections.Counter(map(myround,xs))
   return [c for c in circles if c[0] < 510 and c[1] < 650]
   
 def foo(c):
@@ -53,9 +60,9 @@ def foo(c):
 class Dot:
   
   Purple = numpy.array([157,90,183])
-  Yellow = numpy.array([231,221,0])
-  Red = numpy.array([241,91,59])
-  Green = numpy.array([137,237,144])
+  Yellow = numpy.array([231,221,37])
+  Red = numpy.array([235,93,70])
+  Green = numpy.array([138,233,145])
   Blue = numpy.array([138,189,255])
 
 
@@ -69,7 +76,7 @@ class Dot:
 
   def getColour(self): return self._col
 
-CONST_RANGE = 30
+CONST_RANGE = 10
 def determineColour(col):
   if numpy.linalg.norm(numpy.array(col) - Dot.Green) < CONST_RANGE: return 'G'
   elif numpy.linalg.norm(numpy.array(col) - Dot.Purple) < CONST_RANGE: return 'P'
