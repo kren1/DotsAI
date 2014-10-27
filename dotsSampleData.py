@@ -84,6 +84,9 @@ sampleBoard1 = [
     Dot(6,6,60,60,Dot.Blue),
   ]
 
+sampleBoardCommands = "2,6 -> 3,6 -> 4,6 -> 5,6"
+sampleBoardCommandsResult = [(20,60),(30,60),(40,60),(50,60)]
+
 boardSample1 = """G G R P G B 
 G G G G G G 
 G G G G G G 
@@ -137,3 +140,9 @@ B G Y R R Y
 B P P R P B 
 P P G Y B B \n"""
 
+dots1PMG = """B R B P G G 
+R B P P B B 
+G B G G R G 
+R B R G B B 
+R R G R R R 
+G B B B B R \n"""

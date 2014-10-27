@@ -3,6 +3,7 @@ import cv2
 import collections
 
 from operator import itemgetter
+from pyparsing import *
 
 
 class DotsBoard:
@@ -42,7 +43,23 @@ class DotsBoard:
         s += self._dots[j + i*6].getColour() +  " "
       s += "\n"
     return s
-  
+
+  def matchPair(self, pair):
+      for dot in self._dots:
+          if dot.x == pair[0] and dot.y == pair[1]:
+              return (dot.externX , dot.externY)
+
+  def convertCommands(self,commands):
+      ts = transition.parseString(commands)
+      return map(self.matchPair, ts)
+
+
+
+coordinate = Word("123450", max=1) + "," + Word("123450", max=1)
+coordinate.setParseAction(lambda s,l,t:(int(t[0]), int(t[2])))
+arrow = Literal("->").suppress()
+transition = And(OneOrMore(coordinate + arrow) + coordinate)
+
 #POST: check there are exactly 6 distinct x and y coordinates with some tolerance and throw anything else away
 def filterCircles(circles,image):
   #TODO: make proper filtration
@@ -75,6 +92,9 @@ class Dot:
     self._col = determineColour(col)
 
   def getColour(self): return self._col
+
+  def __repr__(self):
+    return "x: {} y: {} maps to {}, {} \n".format(self.x,self.y,self.externX,self.externY)
 
 CONST_RANGE = 10
 def determineColour(col):

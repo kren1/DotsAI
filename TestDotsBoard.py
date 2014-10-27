@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import unittest
 from DotsBoard import *
+from pyparsing import ParseException
 from dotsSampleData import *
 import cv2
 import numpy as np
@@ -14,12 +15,22 @@ class TestDotsBoard(unittest.TestCase):
     self.assertEqual(self.board.printBoard(), greenBoard)
     self.board._dots = sampleBoard1
     self.assertEqual(self.board.printBoard(), boardSample1)
-
   def test_constructFromImage(self):
-	image = cv2.imread("dots.png")
+    image = cv2.imread("dots1.png")
+    cv2.rectangle(image, (0,0),(670,120), (255,255,255), -1)
+    cv2.rectangle(image, (0,780),(670,900), (255,255,255), -1)
 	
-	self.board = DotsBoard(image)
-	self.assertEqual(self.board.printBoard(), dotsPNG)
+    self.board = DotsBoard(image)
+    self.assertEqual(self.board.printBoard(), dots1PMG)
+
+  def test_translateCommands(self):
+      self.board._dots = sampleBoard1
+      self.assertEqual(self.board.convertCommands(sampleBoardCommands), sampleBoardCommandsResult)
+
+  def test_parserExcpetionTesting(self):
+      self.board._dots = sampleBoard1
+      self.assertRaises(ParseException, self.board.convertCommands, "1,2 3,4")
+
 
 class TestDot(unittest.TestCase):
   
@@ -37,8 +48,8 @@ class TestDot(unittest.TestCase):
   def test_canGetColour(self):
     self.assertEqual(self.dot.getColour(), 'G')
     self.assertEqual(Dot(0,0,0,0,[157,90,183]).getColour(),'P')
-    self.assertEqual(Dot(0,0,0,0,[231,221,0]).getColour(),'Y')
-    self.assertEqual(Dot(0,0,0,0,[241,91,59]).getColour(),'R')
+    self.assertEqual(Dot(0,0,0,0,[231,221,30]).getColour(),'Y')
+    self.assertEqual(Dot(0,0,0,0,[235,91,78]).getColour(),'R')
 
   def test_canGetColourWithRoughData(self):
     self.assertEqual(Dot(0,0,0,0,[159,88,182]).getColour(),'P')
